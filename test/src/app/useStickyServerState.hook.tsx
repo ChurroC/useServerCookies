@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { getCookie } from "./context/cookie.context";
+import { number } from "zod";
+
+declare const cookieStore: {
+    get: (name: string) => Promise<{ value: string }>;
+    set: (name: string, value: string) => void;
+} & EventTarget;
 
 function useOnChange(
     callback: React.EffectCallback,
@@ -19,18 +25,71 @@ function useOnChange(
     }, dependancies);
 }
 
+interface CookieData<State> {
+    value: State;
+    expires?: number;
+}
+
 export function useStickyServerState<State>(key: string, defaultValue: State) {
-    const [value, setValue] = useState(
-        (getCookie(key) as State) ?? defaultValue
-    );
+    const [value, setValueOnly] = useState<CookieData<State>>({
+        value: (getCookie(key) as State) ?? defaultValue
+    });
 
     useOnChange(() => {
         if (typeof cookieStore !== "undefined") {
-            cookieStore.set(key, value);
+            cookieStore.set(key, JSON.stringify(value));
         } else {
-            document.cookie = `${key}=${value};`;
+            document.cookie = `${key}=${JSON.stringify(value)};`;
         }
     }, [value]);
 
-    return [value, setValue] as const;
+    // add calback
+    // function setValue({
+    //     value,
+    //     expires
+    // }: {
+    //     value: State;
+    //     expires?: number;
+    // }): void;
+    // function setValue({
+    //     callback,
+    //     expires
+    // }: {
+    //     callback: (prevState: State) => State;
+    //     expires?: number;
+    // }): void;
+    // function setValue(
+    //     callback: (prevState: State) => State,
+    //     expires?: number
+    // ): void;
+    // function setValue(newValue: State, expires?: number): void {
+    //     if (typeof newValue === "function") {
+    //         // This is if they give a callback function and an expiry time
+    //         setValueOnly(prev => {
+    //             const value = newValue(prev.value);
+    //             return { value, ...(expires ? { expires } : {}) };
+    //         });
+    //     } else if (typeof newValue === "object") {
+    //         if (typeof newValue.callback === "function") {
+    //             const { callback, expires } = newValue;
+    //             setValueOnly(prev => {
+    //                 const value = newValue.callback(prev.value);
+    //                 return {
+    //                     value,
+    //                     ...(expires ? { expires: newValue.expires } : {})
+    //                 };
+    //             });
+    //         } else {
+    //             setValueOnly({
+    //                 value: newValue.value,
+    //                 expires: newValue.expires
+    //             });
+    //         }
+    //     } else {
+    //         setValueOnly({ value: newValue });
+    //     }
+    // }
+
+    const setValue = setValueOnly;
+    return [value.value, setValue] as const;
 }

@@ -3,6 +3,8 @@
 import { createContext, useContext } from "react";
 import type { RequestCookie } from "node_modules/next/dist/compiled/@edge-runtime/cookies/index.d.ts";
 
+// Just going to have everything be strings here then cast it as the generic type in hook
+// In the end it only matters if the generic they give is accurate
 type CookieData = Record<string, string>;
 
 const DropdownContext = createContext<CookieData>({});
@@ -19,7 +21,7 @@ export function CookieProvider({
         (finalObject, currentCookie) => {
             return {
                 ...finalObject,
-                [currentCookie.name]: currentCookie.value
+                [currentCookie.name]: JSON.parse(currentCookie.value)
             };
         },
         {} as CookieData
