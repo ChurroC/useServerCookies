@@ -5,3 +5,6 @@ basically have an overawching orovider
 then getCookie with cookie name as param which outputs [cookie, setcookie] maybe add a dlete cokkie
 for the set cookie have param asa object
 try to use cookeistore api but defuskt to docuemntcookie if not
+
+
+also delete geist later
