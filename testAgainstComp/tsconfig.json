@@ -33,12 +33,10 @@
     ".eslintrc.cjs",
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.d.ts",
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts",
-    "dist"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

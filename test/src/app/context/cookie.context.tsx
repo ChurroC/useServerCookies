@@ -21,7 +21,7 @@ export function CookieProvider({
         (finalObject, currentCookie) => {
             return {
                 ...finalObject,
-                [currentCookie.name]: JSON.parse(currentCookie.value)
+                [currentCookie.name]: currentCookie.value
             };
         },
         {} as CookieData
@@ -34,6 +34,7 @@ export function CookieProvider({
     );
 }
 
-export function getCookie(cookieName: string) {
+// return in json
+export function useCookie(cookieName: string) {
     return useContext(DropdownContext)[cookieName];
 }
