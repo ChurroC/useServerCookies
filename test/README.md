@@ -10,3 +10,5 @@ try to use cookeistore api but defuskt to docuemntcookie if not
 also delete geist later for actula module
 
 Also have to options for setting state to either have a value or a object with options.
+
+also give theme the option to have a defuslt value of server cookie so they can use fheir own cookies
