@@ -24,7 +24,7 @@ export function useStickyServerState<CookieType>(
     defaultValue: CookieType
 ) {
     const [cookie, setCookie] = useState<CookieType>(() => {
-        if (typeof window !== "undefined") {
+        if (typeof window === "undefined") {
             const cookieValue = useCookie(name);
             if (cookieValue) {
                 return JSON.parse(cookieValue);

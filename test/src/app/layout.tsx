@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import { ServerStateProvider } from "./context/cookieProvider";
+import { ServerStateProvider } from "@/context/cookieProvider";
 
 import { GeistSans } from "geist/font/sans";
 
