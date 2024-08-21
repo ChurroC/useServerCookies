@@ -1,19 +1,19 @@
 "use client";
 
-import { useCookie } from "@/context/cookie.context";
+import { useStickyServerState } from "./useStickyServerState.hook";
 
 export default function HomePage() {
-    const [cookie, setCookie] = useCookie("name");
+    const [name, setName] = useStickyServerState("name", "wow");
 
     return (
         <div className="flex h-screen flex-col items-center justify-center gap-4">
-            <div>Your Name is {cookie === "" ? "Unknown" : cookie?.trim()}</div>
+            <div>Your Name is {name === "" ? "Unknown" : name.trim()}</div>
             <input
                 name="nameInput"
-                value={cookie}
+                value={name}
                 className="border rounded-md shadow-sm"
                 onChange={event => {
-                    setCookie(event.target.value);
+                    setName(event.target.value);
                 }}
             />
         </div>

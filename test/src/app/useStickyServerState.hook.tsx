@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useCookie } from "./context/cookie.context";
+import { useCookie } from "@/context/cookie.context";
 
 function useOnChange(
     callback: React.EffectCallback,
@@ -23,35 +23,8 @@ export function useStickyServerState<CookieType>(
     name: string,
     defaultValue: CookieType
 ) {
-    const [cookie, setCookie] = useState<CookieType>(() => {
-        if (typeof window === "undefined") {
-            const cookieValue = useCookie(name);
-            if (cookieValue) {
-                return JSON.parse(cookieValue);
-            } else {
-                return defaultValue;
-            }
-        } else {
-            if (typeof cookieStore !== "undefined") {
-                cookieStore.get(name).then(cookie => {
-                    if (cookie) {
-                        return JSON.parse(cookie);
-                    } else {
-                        return defaultValue;
-                    }
-                });
-            } else {
-                const cookies = document.cookie.split(";");
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].split("=");
-                    if (cookie[0].trim() === name) {
-                        return JSON.parse(cookie[1]);
-                    }
-                }
-                return defaultValue;
-            }
-        }
-    });
+    const serverCookie = useCookie(name);
+    const [cookie, setCookie] = useState<CookieType>(serverCookie ? JSON.parse(serverCookie) as CookieType : defaultValue);
 
     // This is checking for external changed in cookies
     useEffect(() => {});
