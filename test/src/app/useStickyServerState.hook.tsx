@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import { useCookie } from "@/context/cookie.context";
 
+
+declare const cookieStore: {
+    get: (name: string) => Promise<{ value: string }>;
+    set: (name: string, value: string) => void;
+} & EventTarget;
+
 function useOnChange(
     callback: React.EffectCallback,
     dependancies: React.DependencyList
@@ -37,6 +43,7 @@ export function useStickyServerState<CookieType>(
 ) {
     const serverCookie = useCookie(key);
     const [cookie, setCookie] = useState<CookieType>(serverCookie ? JSON.parse(serverCookie) as CookieType : defaultValue);
+console.log(cookie)
 
     // Update cookies when cookie state changes
     // Currently have a race condition for localStorage
@@ -54,14 +61,14 @@ export function useStickyServerState<CookieType>(
     useEffect(() => {
         // This is when another tabs theme changes
         // Was going to use broadcast api but this is easier since it runs on other tabs and doesnt run if localstorage is set to the value
-        function onStorageChange({ key: newKey, newValue }: StorageEvent) {
+        async function onStorageChange({ key: newKey, newValue }: StorageEvent) {
             console.log(key, newKey, newValue);
             // New value is just a hash to see if it is the same
             // If not then it will update the cookie
             if (key === newKey && newValue) {
                 if (newValue !== hashCode(JSON.stringify(cookie)).toString()) {
                     if (typeof cookieStore !== "undefined") {
-                        setCookie(JSON.parse(cookieStore.get(key)) as CookieType);
+                        setCookie(JSON.parse((await cookieStore.get(key)).value) as CookieType);
                     } else {
                         setCookie(JSON.parse(document.cookie.match('(^|;)\\s*' + key + '\\s*=\\s*([^;]+)')?.pop() ?? '') as CookieType);
                     }

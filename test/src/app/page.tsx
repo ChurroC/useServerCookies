@@ -2,7 +2,9 @@
 
 import { useStickyServerState } from "./useStickyServerState.hook";
 
+let i = 1
 export default function HomePage() {
+    console.log(i++)
     const [name, setName] = useStickyServerState("name", "wow");
 
     return (
