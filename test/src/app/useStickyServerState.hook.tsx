@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useCookie } from "@/context/cookie.context";
 
 
@@ -61,10 +61,11 @@ export function useStickyServerState<CookieType>(
         // This is when another tabs theme changes
         // Was going to use broadcast api but this is easier since it runs on other tabs and doesnt run if localstorage is set to the value
         async function onStorageChange({ key: newKey, newValue }: StorageEvent) {
-            console.log(key, newKey, newValue);
+            console.log(key, newKey,hashCode(JSON.stringify(cookie)).toString(), newValue);
             // New value is just a hash to see if it is the same
             // If not then it will update the cookie
             if (key === newKey && newValue) {
+                // Need to have dependency of cookie so hash is regenrated
                 if (newValue !== hashCode(JSON.stringify(cookie)).toString()) {
                     if (typeof cookieStore !== "undefined") {
                         setCookie(JSON.parse((await cookieStore.get(key)).value) as CookieType);
@@ -78,7 +79,7 @@ export function useStickyServerState<CookieType>(
         console.log("added event listener");
 
         return () => window.removeEventListener("storage", onStorageChange);
-    }, []);
+    }, [cookie]);
 
     return [cookie, setCookie] as const;
 }
