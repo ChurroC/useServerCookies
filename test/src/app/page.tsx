@@ -2,7 +2,9 @@
 
 import { useStickyServerState } from "./useStickyServerState.hook";
 
+let i = 1;
 export default function HomePage() {
+    console.log(i++)
     const [name, setName] = useStickyServerState("name", "wow");
 
     return (
@@ -13,7 +15,7 @@ export default function HomePage() {
                 value={name}
                 className="border rounded-md shadow-sm"
                 onChange={event => {
-                    setName(event.target.value);
+                    setName(event.target.value, "a");
                 }}
             />
         </div>
