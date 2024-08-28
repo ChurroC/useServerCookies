@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCookie } from "@/context/cookie.context";
 
 
@@ -13,14 +13,14 @@ function useOnChange(
     callback: React.EffectCallback,
     dependancies: React.DependencyList
 ) {
-    const [hasMounted, setHasMounted] = useState(false);
+    const hasMounted = useRef(false)
 
     // Page loads and sets hasMounted to true then next time dependacies change it will run the callback
     useEffect(() => {
-        if (hasMounted) {
+        if (hasMounted.current) {
             return callback();
         } else {
-            setHasMounted(true);
+            hasMounted.current = true
         }
     }, dependancies);
 }
@@ -43,7 +43,6 @@ export function useStickyServerState<CookieType>(
 ) {
     const serverCookie = useCookie(key);
     const [cookie, setCookie] = useState<CookieType>(serverCookie ? JSON.parse(serverCookie) as CookieType : defaultValue);
-console.log(cookie)
 
     // Update cookies when cookie state changes
     // Currently have a race condition for localStorage
