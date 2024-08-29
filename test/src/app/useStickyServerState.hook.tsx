@@ -42,8 +42,8 @@ export function useStickyServerState<CookieType>(
     defaultValue: CookieType
 ) {
     const serverCookie = useCookie(key)
-    const [keyName, setKeyState] = useState(key)
-    const [cookie, setCookieData] = useState<CookieType>(serverCookie ? JSON.parse(serverCookie) as CookieType : defaultValue);
+    const [keyName, setKey] = useState(key)
+    const [cookie, setCookie] = useState<CookieType>(serverCookie ? JSON.parse(serverCookie) as CookieType : defaultValue);
 
     // Update cookies when cookie state changes
     // Currently have a race condition for localStorage
@@ -68,9 +68,9 @@ export function useStickyServerState<CookieType>(
                 // Need to have dependency of cookie so hash is regenrated
                 if (newValue !== hashCode(JSON.stringify(cookie)).toString()) {
                     if (typeof cookieStore !== "undefined") {
-                        setCookieData(JSON.parse((await cookieStore.get(keyName)).value) as CookieType);
+                        setCookie(JSON.parse((await cookieStore.get(keyName)).value) as CookieType);
                     } else {
-                        setCookieData(JSON.parse(document.cookie.match('(^|;)\\s*' + keyName + '\\s*=\\s*([^;]+)')?.pop() ?? '') as CookieType);
+                        setCookie(JSON.parse(document.cookie.match('(^|;)\\s*' + keyName + '\\s*=\\s*([^;]+)')?.pop() ?? '') as CookieType);
                     }
                 }
             }
@@ -80,12 +80,5 @@ export function useStickyServerState<CookieType>(
         return () => window.removeEventListener("storage", onStorageChange);
     }, [cookie, keyName]);
 
-    const setCookie = useCallback((cookie: CookieType, key?: string) => {
-        setCookieData(cookie)
-        if (key) {
-            setKeyState(key)
-        }
-    }, []) as React.Dispatch<React.SetStateAction<CookieType>>
-
-    return [cookie, setCookie] as const;
+    return [cookie, setCookie, setKey] as const;
 }

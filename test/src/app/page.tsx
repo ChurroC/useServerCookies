@@ -5,7 +5,7 @@ import { useStickyServerState } from "./useStickyServerState.hook";
 let i = 1;
 export default function HomePage() {
     console.log(i++)
-    const [name, setName] = useStickyServerState("name", "wow");
+    const [name, setName, setKey] = useStickyServerState("name", "wow");
 
     return (
         <div className="flex h-screen flex-col items-center justify-center gap-4">
@@ -15,7 +15,8 @@ export default function HomePage() {
                 value={name}
                 className="border rounded-md shadow-sm"
                 onChange={event => {
-                    setName(event.target.value, "a");
+                    setName(event.target.value);
+                    setKey("bob")
                 }}
             />
         </div>
